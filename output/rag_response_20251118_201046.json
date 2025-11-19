@@ -1,0 +1,6 @@
+{
+    "answer": "Transformer模型彻底改变了自然语言处理领域。其自注意力机制能够捕捉长距离依赖关系，BERT、GPT等基于Transformer的模型在各种NLP任务上取得突破性进展。这些模型通过预训练和微调范式，显著降低了NLP应用门槛。",
+    "score": -0.3056,
+    "quotation": "Source: d:\\Github_hk\\Learn-RAG\\database\\../tests/demo.txt Content: ...（包含Transformer相关描述）",
+    "note": "注意：检索内容包含多个主题（AI、气候变化），Transformer信息仅占部分内容，相关性得分较低，建议补充更聚焦的资料。"
+}

@@ -182,7 +182,7 @@ class ChromaVectorStore:
 
         if old_chunks:
             ids = [c.vector_id for c in old_chunks]
-            self._vector_store._collection.delete(ids=ids)
+            self._vector_store._collection.delete(ids=ids) # type: ignore
             print(f"物理删除 {len(ids)} 条旧版本向量")
         else:
             print("无旧版本可清理")

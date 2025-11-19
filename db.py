@@ -1,4 +1,4 @@
-from text_splitter import create_chunks_by_length, create_chunks_by_semantics
+from demo.text_splitter import create_chunks_by_length, create_chunks_by_semantics
 # import weaviate
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.docstore.in_memory import InMemoryDocstore

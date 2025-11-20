@@ -36,7 +36,6 @@ class RAGAgent:
         )
         self.vector_store = vector_store
 
-        
         @tool
         def search(query:str):
             """Useful for when you need to search Google for up-to-date information or real-time events."""
@@ -44,17 +43,17 @@ class RAGAgent:
             result = search.results(query)
 
             return result
-        
+
         @tool(response_format="content_and_artifact")
         def retrieve_context(query: str):
             """Retrieve information to help answer a query."""
-            retrieved_docs = self.vector_store.retrivel(query, k=2)
+            retrieved_docs = vector_store.retrivel(query, k=2)
             serialized = "\n\n".join(
                 (f"Source: {doc.metadata}\nContent: {doc.page_content} \n Relevance Score: {score}")
                 for doc, score in retrieved_docs
             )
             return serialized, retrieved_docs
-    
+
         tools = [retrieve_context, search]
 
         prompt = (
@@ -81,12 +80,13 @@ class RAGAgent:
             stream_mode="values",
         ):
             event["messages"][-1].pretty_print()
+
         # res = self._agent.invoke(
         #     {"messages": [{"role": "user", "content": query}]},
         #     stream_mode="values",
         # )   
 
-        # structured: RAGResponse = res["structured_response"]
+        # structured = res["structured_response"]
         # print(structured)
         # print(type(structured))
 
@@ -107,7 +107,7 @@ class RAGAgent:
 
 
 if __name__ == "__main__":
-    query = "2025年的美国总统"
+    query = "Transformer"
     agent = RAGAgent()
 
     # Example of how to use the output_parser (assuming agent.invoke returns a string)

@@ -15,7 +15,18 @@ from doc_table import get_db_session, Documents, DocumentChunks
 
 
 class ChromaVectorStore:
+    _instance = None
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(ChromaVectorStore, cls).__new__(cls)
+            cls._instance._initialized = False
+        return cls._instance
+    
     def __init__(self):
+        if self._initialized:
+            return
+        
         self._embeddings = HuggingFaceEmbeddings(
             model_name="all-MiniLM-L6-v2",
             model_kwargs={'device': 'cpu'}
@@ -25,7 +36,9 @@ class ChromaVectorStore:
             embedding_function=self._embeddings,
             persist_directory="./chroma_langchain_db",
         )
+        
         self.session = get_db_session()
+        self._initialized = True
 
     # ====================== 上传/更新文档 ======================
     def upload_document(self, file_path: str) -> None:
@@ -200,12 +213,12 @@ vector_store = ChromaVectorStore()
 
 # 测试
 if __name__ == "__main__":
-    # vector_store.upload_document("./tests/demo.txt")
+    vector_store.upload_document("./tests/demo.txt")
     # vector_store.upload_document("./tests/许三观卖血记.txt")  # 再次上传 → 自动 v2
-    vector_store.delete_document("./tests/许三观卖血记.txt")  # 再次上传 → 自动 v2
+    # vector_store.delete_document("./tests/许三观卖血记.txt")  # 再次上传 → 自动 v2
     # vector_store.delete_document("demo.txt")
     # vector_store.delete_document("demo.txt")
 
-    results = vector_store.similarity_search("RAG 是什么", k=4)
+    results = vector_store.similarity_search("Transformer", k=1)
     for doc, score in results:
-        print(f"Score: {score:.4f}\n{doc.page_content[:300]}\n{'-'*80}")
+        print(f"Score: {score:.4f}\n{doc.page_content}\n{'-'*80}")

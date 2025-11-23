@@ -64,6 +64,8 @@ Learn-RAG/
    EMBEDDING_MODEL_DEVICE=cpu
    ```
 
+4. Turn on your ollama
+
 ## Usage
 
 ### 1. Database Setup
@@ -108,19 +110,8 @@ The project supports both Chroma and FAISS vector stores:
 
 ```python
 # Chroma (default)
-from chroma_db import vector_store
+from vector_db.chroma_db import vector_store
 
-# FAISS
-from vector_db.faiss_db import vector_store
-```
-
-### 5. Evaluation
-
-Evaluate the RAG system performance:
-
-```python
-from evaluation.dataset import dataset
-# Use the dataset for evaluation metrics
 ```
 
 ## Key Components
@@ -132,12 +123,6 @@ from evaluation.dataset import dataset
 - Provides similarity search functionality
 - Supports document versioning
 
-### FaissVectorStore (`vector_db/faiss_db.py`)
-
-- Alternative vector store using FAISS for efficient similarity search
-- Manages document upload, update, and deletion
-- Handles document chunking and vectorization
-- Supports document versioning
 
 ### RAGAgent (`rag.py`)
 
@@ -161,14 +146,6 @@ The `config.py` file manages all configuration settings:
 - LLM model parameters
 - Embedding model configuration
 - RAG-specific parameters
-
-## Testing
-
-Run the test script to verify functionality:
-
-```bash
-python test.py
-```
 
 ## Contributing
 

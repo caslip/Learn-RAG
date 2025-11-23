@@ -26,15 +26,15 @@ os.getenv("SERPER_API_KEY")
 
 class RAGResponse(BaseModel):
     """
-    StandardOutput of RAGAgent 
+    Standard output of RAGAgent 
     """
-    answer: str = Field(description="The answer of user's question")
-    score: float = Field(description="The score of retrieve context relevance," \
+    answer: str = Field(description="The answer to the user's question")
+    score: float = Field(description="The score of retrieved context relevance," \
     " directly adopt the relevance score," \
-    "if the score is not only one, get average score of each score")
-    quotation: str = Field(description="The information of retrieval context, " \
+    "if the score is not only one, get the average score of each score")
+    quotation: str = Field(description="The information from the retrieval context, " \
     "including the metadata of the context")
-    note:str = Field(description="The everything you want to remind user")
+    note:str = Field(description="Any additional information you want to remind the user")
 
 class RAGAgent:
     def __init__(self) -> None:
@@ -79,7 +79,7 @@ class RAGAgent:
         )
 
     def invoke(self, query: str):
-        """直接收集流式输出的所有数据"""
+        """Directly collect all data from streaming output"""
         collected_messages = []
         
         for event in self._agent.stream(
@@ -97,12 +97,12 @@ class RAGAgent:
         # print(structured)
         # print(type(structured))
 
-        # # 将 RAGResponse 对象的所有属性保存到 JSON 文件
-        # response_dict = structured.model_dump() # 将 Pydantic 模型转换为字典
+        # # Save all attributes of the RAGResponse object to a JSON file
+        # response_dict = structured.model_dump() # Convert Pydantic model to dictionary
         # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         # filename = f"output/rag_response_{timestamp}.json"
         
-        # # 确保输出目录存在
+        # # Ensure the output directory exists
         # os.makedirs(os.path.dirname(filename), exist_ok=True)
         
         # with open(filename, 'w', encoding='utf-8') as f:

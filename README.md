@@ -14,8 +14,9 @@ A comprehensive Retrieval-Augmented Generation (RAG) system implementation, expl
 
 ```
 Learn-RAG/
-├── chroma_db.py              # Chroma vector store implementation
 ├── vector_db/
+│   ├── __init__.py
+│   ├── chroma_db.py        # Chroma vector store implementation
 │   └── faiss_db.py          # FAISS vector store implementation
 ├── rag.py                    # RAG agent implementation
 ├── db.py                     # Basic FAISS vector store example
@@ -25,7 +26,8 @@ Learn-RAG/
 ├── db/
 │   └── create.py            # Database table creation script
 ├── evaluation/
-│   └── dataset.py           # Dataset creation for evaluation
+│   ├── dataset.py           # Dataset creation for evaluation
+│   └── evaluation.py        # Evaluation scripts
 ├── demo/                    # Demo scripts for text splitting
 ├── tests/                   # Test documents
 ├── output/                  # Output directory for generated responses
@@ -96,8 +98,8 @@ Use the RAG agent to answer questions:
 from rag import RAGAgent
 
 agent = RAGAgent()
-response = agent.invoke("What is RAG?")
-print(response)
+agent.invoke("What is RAG?")
+# The agent will stream the response to the console
 ```
 
 ### 4. Using Different Vector Stores
@@ -123,7 +125,7 @@ from evaluation.dataset import dataset
 
 ## Key Components
 
-### ChromaVectorStore (`chroma_db.py`)
+### ChromaVectorStore (`vector_db/chroma_db.py`)
 
 - Manages document upload, update, and deletion
 - Handles document chunking and vectorization
@@ -142,7 +144,7 @@ from evaluation.dataset import dataset
 - Implements a RAG system with Ollama LLM
 - Combines retrieved context with web search capabilities
 - Generates structured responses using Pydantic models
-- Saves responses to JSON files
+- Streams responses to the console
 
 ### Document Management (`doc_table.py`)
 

@@ -5,27 +5,27 @@ from sqlalchemy.orm import sessionmaker, mapped_column
 from datetime import datetime
 import sqlalchemy
 
-# ==================== 1. 配置你的 MySQL 连接 ====================
-# 把下面这几项改成你自己的
-DB_USER = "root"          # 你的用户名
-DB_PASSWORD = "123"   # 你的密码
+# ==================== 1. Configure your MySQL connection ====================
+# Change the following items to your own
+DB_USER = "root"          # Your username
+DB_PASSWORD = "your_password"   # Your password
 DB_HOST = "127.0.0.1"
 DB_PORT = "3306"
-DB_NAME = "rag_db"        # 数据库名，不存在会自动创建
+DB_NAME = "rag_db"        # Database name, will be created if it doesn't exist
 
 DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
 
-# ==================== 2. 创建 engine 和 Base ====================
+# ==================== 2. Create engine and Base ====================
 engine = create_engine(
     DATABASE_URL,
-    echo=True,                    # 打印 SQL，便于调试（上线可关）
+    echo=True,                    # Print SQL for debugging (can be turned off in production)
     future=True,
     pool_pre_ping=True
 )
 
 Base = declarative_base()
 
-# ==================== 3. 定义两张表（复数规范） ====================
+# ==================== 3. Define two tables (plural convention) ====================
 class Documents(Base):
     __tablename__ = "documents"
 
@@ -49,40 +49,40 @@ class DocumentChunks(Base):
     id           = Column(Integer, primary_key=True, autoincrement=True)
     document_id  = Column(Integer, ForeignKey("documents.id", ondelete="CASCADE"),
                          nullable=False, index=True)
-    chunk_index  = Column(Integer, nullable=False, comment="块序号，从0开始")
+    chunk_index  = Column(Integer, nullable=False, comment="Chunk sequence number, starting from 0")
     vector_id    = Column(String(255), unique=True, nullable=False, index=True,
-                         comment="Chroma 中的向量 ID")
+                         comment="Vector ID in Chroma")
 
     __table_args__ = (
         sqlalchemy.UniqueConstraint('document_id', 'chunk_index', name='uix_doc_chunk'),
     )
 
 
-# ==================== 4. 一键创建数据库 + 表 ====================
+# ==================== 4. One-click create database + tables ====================
 def create_database_if_not_exists():
-    """如果数据库不存在就自动创建"""
+    """Create the database automatically if it doesn't exist"""
     no_db_url = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}"
     temp_engine = create_engine(no_db_url, echo=False)
     with temp_engine.connect() as conn:
         conn.execute(text(f"CREATE DATABASE IF NOT EXISTS `{DB_NAME}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"))
-        print(f"数据库 `{DB_NAME}` 已准备好")
+        print(f"Database `{DB_NAME}` is ready")
 
 def create_tables():
     create_database_if_not_exists()
     Base.metadata.create_all(bind=engine, checkfirst=True)
-    print("表 `documents` 和 `document_chunks` 创建成功！")
+    print("Tables `documents` and `document_chunks` created successfully!")
 
-# ==================== 5. 执行 ====================
+# ==================== 5. Execute ====================
 if __name__ == "__main__":
     create_tables()
 
-    # 可选：打印表结构验证
-    print("\n=== documents 表结构 ===")
+    # Optional: Print table structure for verification
+    print("\n=== documents table structure ===")
     with engine.connect() as conn:
         result = conn.execute(text("SHOW CREATE TABLE documents"))
         print(result)
 
-    print("\n=== document_chunks 表结构 ===")
+    print("\n=== document_chunks table structure ===")
     with engine.connect() as conn:
         result = conn.execute(text("SHOW CREATE TABLE document_chunks"))
         print(result)

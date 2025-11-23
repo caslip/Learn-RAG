@@ -6,12 +6,12 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from rag import agent
-from db import vector_store
+from ..vector_db.chroma_db import vector_store
 
-questions = ['Transformer改变了什么?',
-             '深度学习在哪个分支']
-ground_truths = ['Transformer模型彻底改变了自然语言处理领域',
-                 '深度学习是机器学习的一个重要分支。']
+questions = ['What did the Transformer change?',
+             'Which branch does deep learning belong to?']
+ground_truths = ['The Transformer model has revolutionized the field of natural language processing',
+                 'Deep learning is an important branch of machine learning.']
 answers = []
 contexts = []
 

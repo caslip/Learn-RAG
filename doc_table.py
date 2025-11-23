@@ -5,17 +5,17 @@ from sqlalchemy import Boolean, create_engine, Column, Integer, String, Text, Da
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship, mapped_column
 from config import get_config
 
-# 获取配置
+# Get configuration
 config = get_config()
 MYSQL_URI = config.MYSQL_URI
 
-# 创建数据库引擎
+# Create database engine
 engine = create_engine(MYSQL_URI)
 
-# 创建基类 (使用新的 2.0 风格)
+# Create base class (using the new 2.0 style)
 Base = declarative_base()
 
-# doc_table.py （假设你已经有了，稍微补全/修改）
+# doc_table.py (assuming you already have it, slightly completed/modified)
 # doc_table.py
 from sqlalchemy import (
     Column, Integer, String, Boolean, DateTime, ForeignKey, create_engine
@@ -27,9 +27,9 @@ from datetime import datetime
 Base = declarative_base()
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# ==================== 复数表名，更规范！====================
-class Documents(Base):   # ← 类名大写复数
-    __tablename__ = "documents"  # 表名小写复数（数据库标准）
+# ==================== Plural table names, more standard! =====================
+class Documents(Base):   # ← Class name capitalized plural
+    __tablename__ = "documents"  # Table name lowercase plural (database standard)
 
     id = Column(Integer, primary_key=True)
     file_name = Column(String(255), unique=True, nullable=False, index=True)
@@ -40,37 +40,36 @@ class Documents(Base):   # ← 类名大写复数
     updated_at = mapped_column(DateTime, default=datetime.utcnow, 
                         onupdate=datetime.utcnow, nullable=False)
 
-    # 关系：一个文档有多个 chunks（方便反向查询，可选）
+    # Relationship: one document has many chunks (convenient for reverse lookup, optional)
     chunks = relationship("DocumentChunks", back_populates="document", 
                           cascade="all, delete-orphan")
 
 
-class DocumentChunks(Base):  # ← 类名大写复数
+class DocumentChunks(Base):  # ← Class name capitalized plural
     __tablename__ = "document_chunks"
 
     id = Column(Integer, primary_key=True)
     document_id = Column(Integer, ForeignKey("documents.id", ondelete="CASCADE"), 
                          nullable=False, index=True)
-    chunk_index = Column(Integer, nullable=False)      # 第几个 chunk
+    chunk_index = Column(Integer, nullable=False)      # Which chunk number
     vector_id = Column(String(255), unique=True, nullable=False, index=True)
 
-    # 反向关系
+    # Reverse relationship
     document = relationship("Documents", back_populates="chunks")
 
     
-# 创建数据库表
+# Create database tables
 def create_tables():
     """
-    在数据库中创建所有定义的表。
+    Create all defined tables in the database.
     """
     Base.metadata.create_all(engine)
     print("Database tables created successfully.")
 
-# 获取数据库会话
+# Get database session
 def get_db_session():
     db = SessionLocal()
     try:
         return db
     finally:
-        pass  # 不要在这里 close，由调用方控制（或用 contextmanager）
-
+        pass  # Do not close here, let the caller control it (or use contextmanager)

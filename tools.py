@@ -1,6 +1,11 @@
 from langchain.tools import tool
 from langchain_community.utilities import GoogleSerperAPIWrapper
-from chroma_db import vector_store
+import sys
+import os
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
+from vector_db.chroma_db import vector_store
 
 @tool
 def search(query:str):

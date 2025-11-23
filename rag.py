@@ -8,11 +8,18 @@ from langchain.tools import tool
 from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.agents import create_agent
-from chroma_db import vector_store
+
+import sys
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
+from vector_db.chroma_db import vector_store
 from pydantic import BaseModel, Field
 from langchain_core.output_parsers.json import JsonOutputParser
 from langchain_community.utilities import GoogleSerperAPIWrapper
 from dotenv import load_dotenv
+
+from tools import retrieve_context, search
 
 load_dotenv()
 os.getenv("SERPER_API_KEY")
@@ -36,23 +43,23 @@ class RAGAgent:
         )
         self.vector_store = vector_store
 
-        @tool
-        def search(query:str):
-            """Useful for when you need to search Google for up-to-date information or real-time events."""
-            search = GoogleSerperAPIWrapper(k=10)
-            result = search.results(query)
+        # @tool
+        # def search(query:str):
+        #     """Useful for when you need to search Google for up-to-date information or real-time events."""
+        #     search = GoogleSerperAPIWrapper(k=10)
+        #     result = search.results(query)
 
-            return result
+        #     return result
 
-        @tool(response_format="content_and_artifact")
-        def retrieve_context(query: str):
-            """Retrieve information to help answer a query."""
-            retrieved_docs = vector_store.retrivel(query, k=2)
-            serialized = "\n\n".join(
-                (f"Source: {doc.metadata}\nContent: {doc.page_content} \n Relevance Score: {score}")
-                for doc, score in retrieved_docs
-            )
-            return serialized, retrieved_docs
+        # @tool(response_format="content_and_artifact")
+        # def retrieve_context(query: str):
+        #     """Retrieve information to help answer a query."""
+        #     retrieved_docs = vector_store.retrivel(query, k=2)
+        #     serialized = "\n\n".join(
+        #         (f"Source: {doc.metadata}\nContent: {doc.page_content} \n Relevance Score: {score}")
+        #         for doc, score in retrieved_docs
+        #     )
+        #     return serialized, retrieved_docs
 
         tools = [retrieve_context, search]
 
